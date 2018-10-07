@@ -40,7 +40,7 @@ class App extends React.Component {
     if (typeof window.web3 === "undefined" || query.chain) {
       console.log("No Web3 provider found. Using HyperMask.");
       // second parameter is optional, defaults to app.hypermask.io. Pass in a localhost URL when developing.
-      const hypermaskURL = query.local ? 'http://localhost:41139/' : "https://app.hypermask.io/"
+      const hypermaskURL = ('local' in query) ? 'http://localhost:41139/' : "https://app.hypermask.io/"
       window.web3 = new Web3(withHyperMask(infuraProvider, hypermaskURL));
     } else if (typeof web3 !== "undefined") {
       alert(
