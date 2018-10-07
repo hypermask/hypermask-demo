@@ -18,21 +18,69 @@ decodeURIComponent(location.search.slice(1)).split('&').forEach(part => {
 
 const TARGET_ADDR = "0x4c020de581b98292f1cce93698a1fec462b0c4d2";
 const HMTT_ADDR = "0x8790b46fd9fe602a5a7ee8957cc9f558e58a31b5";
-const NETWORKS = {
-    mainnet: "Main Ethereum Network",
-    main: "Main Ethereum Network",
-    ropsten: "Ropsten Test Network",
-    kovan: "Kovan Test Network",
-    morden: "Morden Test Network",
-    rinkeby: "Rinkeby Test Network",
-    private: "Unknown Network"
-};
+const CHAINS = [
+    {
+        name: 'Ethereum Main Network',
+        slug: 'mainnet',
+        id: '1',
+        explore: 'https://etherscan.io/address/',
+        token_explore: 'https://etherscan.io/token/',
+        rpc: "https://mainnet.infura.io/Dpsk5u62HN582LMDXeFr",
+        wsRpc: "wss://mainnet.infura.io/ws"
+    }, {
+        name: 'Ropsten Test Network',
+        slug: 'ropsten',
+        id: '3',
+        explore: 'https://ropsten.etherscan.io/address/',
+        token_explore: 'https://ropsten.etherscan.io/token/',
+        rpc: "https://ropsten.infura.io/Dpsk5u62HN582LMDXeFr",
+        wsRpc: "wss://ropsten.infura.io/ws"
+    }, {
+        name: 'Rinkeby Test Network',
+        slug: 'rinkeby',
+        id: '4',
+        explore: 'https://rinkeby.etherscan.io/address/',
+        token_explore: 'https://rinkeby.etherscan.io/token/',
+        rpc: "https://rinkeby.infura.io/Dpsk5u62HN582LMDXeFr",
+        wsRpc: "wss://rinkeby.infura.io/ws"
+    }, {
+        name: 'Kovan Test Network',
+        slug: 'kovan',
+        id: '42',
+        explore: 'https://kovan.etherscan.io/address/',
+        token_explore: 'https://kovan.etherscan.io/token/',
+        rpc: "https://kovan.infura.io/Dpsk5u62HN582LMDXeFr",
+        wsRpc: "wss://kovan.infura.io/ws"
+    }
+]
+
+
+
+function findChain(idOrSlug){
+    for(let chain of CHAINS){
+        if(chain.slug == idOrSlug || chain.id == idOrSlug){
+            return chain;
+        }
+    }
+    return {
+        name: `Custom Chain (${idOrSlug})`,
+        slug: idOrSlug,
+        id: idOrSlug,
+        explore: 'https://example.com/',
+        rpc: ''
+    }
+}
+
+
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
-        const infuraURL = query.chain == 'mainnet' ? "wss://mainnet.infura.io/ws" : "wss://ropsten.infura.io/ws";
+        const chainSlug = query.chain || 'ropsten'
+
+        const infuraURL = findChain(chainSlug).wsRpc
+
         let infuraProvider = new Web3.providers.WebsocketProvider(infuraURL);
         let existingProvider = false;
         // Uncomment this to only use HyperMask if no Web3 provider is detected
@@ -59,9 +107,9 @@ class App extends React.Component {
     componentDidMount() {
         // determine current network
         web3.eth.net.getNetworkType().then(result => {
-            let network = NETWORKS[result] || "Unknown Network";
-            console.log(JSON.stringify(network, null, 2));
-            this.setState({ network: network });
+            // let network = NETWORKS[result] || "Unknown Network";
+            // console.log(JSON.stringify(network, null, 2));
+            this.setState({ network: result });
         });
 
         // fetch EVM gas price
@@ -147,7 +195,15 @@ class App extends React.Component {
                 </div>
                 <div>
                     Network:{" "}
-                    <span id="network">{this.state.network || "Loading..."}</span>
+                    <select value={this.state.network || 'loading'} onChange={e => {
+                        // console.log(e.target.value)
+                        location.search = '?chain=' + e.target.value
+                    }}>
+                    {this.state.network || <option value="loading" disabled>Loading...</option>}
+                    {CHAINS.map(k => 
+                        <option value={k.slug} key={k.slug}>{k.name}</option>
+                    )}
+                    </select>
                 </div>
 
                 <br />
