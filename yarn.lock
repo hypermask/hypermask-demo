@@ -1548,9 +1548,9 @@ http-signature@~1.2.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
-hypermask@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/hypermask/-/hypermask-1.0.10.tgz#56d16bad9551c43aa749b49ad108e7bf98ececb6"
+hypermask@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/hypermask/-/hypermask-1.0.11.tgz#cb2b0a8032fbd1e2d94296cf48ff557cc828c3f0"
 
 iconv-lite@0.4.19:
   version "0.4.19"
